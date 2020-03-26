@@ -64,7 +64,7 @@ func QuantRoller(x float64, rQ *RQuant) {
 			k = 3
 		} else {
 			for i = 0; i <= 3; i++ {
-				if rQ.q[i] <= x && x < rQ.q[i+1] {
+				if (rQ.q[i] <= x) && (x < rQ.q[i+1]) {
 					k = i
 					break
 				}
@@ -90,7 +90,7 @@ func QuantRoller(x float64, rQ *RQuant) {
 			ni := rQ.npos[i]
 			d := rQ.np[i] - float64(ni)
 
-			if (d >= 1.0 && (rQ.npos[i+1]-rQ.npos[i] > 1)) || (d <= -1.0 && rQ.npos[i-1]-rQ.npos[i] < -1) {
+			if ((d >= 1.0) && (rQ.npos[i+1]-rQ.npos[i] > 1)) || ((d <= -1.0) && (rQ.npos[i-1]-rQ.npos[i] < -1)) {
 				var dsign int64
 				if d > 0.0 {
 					dsign = 1
@@ -103,20 +103,21 @@ func QuantRoller(x float64, rQ *RQuant) {
 				np1 := rQ.npos[i+1]
 				nm1 := rQ.npos[i-1]
 				//qp := calc_psq(qp1, qi, qm1, dsign, np1, ni, nm1)
-				outer := d / float64(np1-nm1)
-				innerleft := (float64(ni) - float64(nm1) + d) * (qp1 - qi) / float64(np1-ni)
-				innerright := (float64(np1-ni) - d) * (qi - qm1) / float64(ni-nm1)
+				outer := float64(dsign) / float64(np1-nm1)
+				innerleft := (float64(ni) - float64(nm1) + float64(dsign)) * (qp1 - qi) / float64(np1-ni)
+				innerright := (float64(np1-ni) - float64(dsign)) * (qi - qm1) / float64(ni-nm1)
 				qp := qi + outer*(innerleft+innerright)
 				//
+				
 				if qm1 < qp && qp < qp1 {
 					rQ.q[i] = qp
 				} else {
-					{
 						/* use linear formula */
-						rQ.q[i] = rQ.q[i] + float64(dsign)*((rQ.q[i+dsign]-qi)/(float64(rQ.npos[i+dsign])-float64(ni)))
-					}
-					rQ.npos[i] += dsign
+					rQ.q[i] = rQ.q[i] + float64(dsign)*((rQ.q[i+dsign]-qi)/(float64(rQ.npos[i+dsign])-float64(ni)))
 				}
+
+				rQ.npos[i] += dsign
+				
 			}
 		}
 
