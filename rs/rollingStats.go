@@ -12,7 +12,7 @@ type RStats struct {
 	rMean, rVar, rStdDev, rSkew, rKurt float64
 	M1, M2, M3, M4                     float64
 	N                                  uint64
-	min, max                           float64
+	Min, Max                           float64
 }
 
 // RQuant holds the running quantizatoin data
@@ -169,16 +169,16 @@ func RollingStat(x float64, rS *RStats) {
 	var term1 float64
 	var n1 float64
 
-	/* update min and max */
+	/* update Min and Max */
 	if rS.N == 0 {
-		rS.min = x
-		rS.max = x
+		rS.Min = x
+		rS.Max = x
 	} else {
-		if x < rS.min {
-			rS.min = x
+		if x < rS.Min {
+			rS.Min = x
 		}
-		if x > rS.max {
-			rS.max = x
+		if x > rS.Max {
+			rS.Max = x
 		}
 	}
 
